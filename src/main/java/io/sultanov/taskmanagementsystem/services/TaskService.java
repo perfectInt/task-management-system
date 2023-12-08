@@ -1,5 +1,6 @@
 package io.sultanov.taskmanagementsystem.services;
 
+import io.sultanov.taskmanagementsystem.exceptions.ForbiddenActionException;
 import io.sultanov.taskmanagementsystem.exceptions.ObjectNotFoundException;
 import io.sultanov.taskmanagementsystem.mappers.TaskMapper;
 import io.sultanov.taskmanagementsystem.models.Comment;
@@ -14,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -46,6 +46,8 @@ public class TaskService {
             task = taskMapper.mapToTask(taskDto);
             task.setAuthor(author);
             taskRepository.save(task);
+        } else {
+            throw new ForbiddenActionException("You cannot edit other author's task!");
         }
     }
 
@@ -60,10 +62,12 @@ public class TaskService {
     }
 
     public void deleteTask(Long id) {
-        Task task = taskRepository.findById(id).orElseThrow(ObjectNotFoundException::new);
+        Task task = getTaskById(id);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (task.getAuthor().equals(username))
             taskRepository.deleteById(id);
+        else
+            throw new ForbiddenActionException("You cannot delete other author's task!");
     }
 
     public List<Task> getAllUsersTasks(Integer pageNum) {
@@ -74,7 +78,8 @@ public class TaskService {
     }
 
     public Task getTaskById(Long id) {
-        return taskRepository.findById(id).orElseThrow(ObjectNotFoundException::new);
+        return taskRepository.findById(id).orElseThrow(() ->
+                new ObjectNotFoundException("Task with this id does not exist"));
     }
 
     public List<Task> getTasksByAuthorName(String author, Integer pageNum) {
@@ -96,7 +101,7 @@ public class TaskService {
             task.setStatus(changeStatusDto.getStatus());
             return ResponseEntity.ok(taskRepository.save(task));
         } else {
-            return new ResponseEntity<>("Cannot change status because you are not executor", HttpStatus.FORBIDDEN);
+            throw new ForbiddenActionException("Cannot change status because you are not executor");
         }
     }
 }

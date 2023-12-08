@@ -1,5 +1,6 @@
 package io.sultanov.taskmanagementsystem.security.config;
 
+import io.sultanov.taskmanagementsystem.exceptions.ObjectNotFoundException;
 import io.sultanov.taskmanagementsystem.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return email -> userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User was not found"));
+        return email -> userRepository.findByEmail(email).orElseThrow(() -> new ObjectNotFoundException("User was not found"));
     }
 
     @Bean
