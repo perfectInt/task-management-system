@@ -10,6 +10,7 @@ import io.sultanov.taskmanagementsystem.repositories.UserRepository;
 import io.sultanov.taskmanagementsystem.security.config.JwtService;
 import io.sultanov.taskmanagementsystem.security.utils.Role;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,10 +19,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -37,6 +40,7 @@ public class UserService {
         if (!Objects.equals(registrationDto.getPassword(), registrationDto.getPasswordConfirmation()))
             throw new PasswordException("Passwords are not matching!");
         User user = mapper.mapToUser(registrationDto);
+        log.debug("{}", user);
         user.setPassword(encoder.encode(registrationDto.getPassword()));
         user.setRole(Role.USER);
         return userRepository.save(user);
@@ -44,6 +48,10 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id).orElseThrow(ObjectNotFoundException::new);
+    }
+
+    public List<User> getExecutors(List<String> emails) {
+        return userRepository.findAllByEmailInArgs(emails);
     }
 
     public String login(LoginDto loginDto) {
@@ -57,7 +65,7 @@ public class UserService {
         return jwtService.generateToken(user);
     }
 
-    @Mapper(componentModel = "spring")
+    @Mapper
     public interface UserMapper {
         User mapToUser(RegistrationDto registrationDto);
     }
