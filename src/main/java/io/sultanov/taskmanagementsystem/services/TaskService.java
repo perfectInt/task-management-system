@@ -39,13 +39,16 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public void editTask(TaskDto taskDto) {
+    public Task editTask(TaskDto taskDto) {
         Task task = getTaskById(taskDto.getId());
         String author = SecurityContextHolder.getContext().getAuthentication().getName();
         if (task.getAuthor().equals(author)) {
-            task = taskMapper.dtoToTask(taskDto);
-            task.setAuthor(author);
-            taskRepository.save(task);
+            task.setTitle(taskDto.getTitle());
+            task.setDescription(taskDto.getDescription());
+            task.setStatus(taskDto.getStatus());
+            task.setPriority(taskDto.getPriority());
+            task.setExecutors(userService.getExecutors(taskDto.getExecutors()));
+            return taskRepository.save(task);
         } else {
             throw new ForbiddenActionException("You cannot edit other author's task!");
         }
@@ -94,12 +97,13 @@ public class TaskService {
         return taskRepository.getTasksByExecutorsName(executor, pageable);
     }
 
-    public ResponseEntity<?> changeStatus(ChangeStatusDto changeStatusDto) {
+    public Task changeStatus(ChangeStatusDto changeStatusDto) {
         Task task = getTaskById(changeStatusDto.getId());
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (task.getExecutors().stream().map(User::getEmail).toList().contains(username)) {
+        if (task.getExecutors().stream().map(User::getEmail).toList().contains(username) ||
+                task.getAuthor().equals(username)) {
             task.setStatus(changeStatusDto.getStatus());
-            return ResponseEntity.ok(taskRepository.save(task));
+            return taskRepository.save(task);
         } else {
             throw new ForbiddenActionException("Cannot change status because you are not executor");
         }

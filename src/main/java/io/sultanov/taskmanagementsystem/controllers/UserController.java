@@ -25,8 +25,13 @@ public class UserController {
         return userService.login(loginDto);
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "secured endpoint";
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+
+    @GetMapping("/emails/{email}")
+    public User getUserByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email);
     }
 }

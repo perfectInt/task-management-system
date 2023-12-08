@@ -51,6 +51,11 @@ public class UserService {
                 new ObjectNotFoundException("User with this id does not exist"));
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new ObjectNotFoundException("User with this email does not exist"));
+    }
+
     public List<User> getExecutors(List<String> emails) {
         return userRepository.findAllByEmailInArgs(emails);
     }
@@ -62,8 +67,7 @@ public class UserService {
                         loginDto.getPassword()
                 )
         );
-        var user = userRepository.findByEmail(loginDto.getEmail()).orElseThrow(() ->
-                new ObjectNotFoundException("User with this email does not exist"));
+        var user = getUserByEmail(loginDto.getEmail());
         return jwtService.generateToken(user);
     }
 

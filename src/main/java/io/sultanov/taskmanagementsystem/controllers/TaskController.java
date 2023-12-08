@@ -30,8 +30,8 @@ public class TaskController {
     }
 
     @PutMapping
-    public void updateTask(@Valid @RequestBody TaskDto taskDto) {
-        taskService.editTask(taskDto);
+    public Task updateTask(@Valid @RequestBody TaskDto taskDto) {
+        return taskService.editTask(taskDto);
     }
 
     @DeleteMapping("/{id}")
@@ -45,7 +45,7 @@ public class TaskController {
     }
 
     @PutMapping("/status")
-    public ResponseEntity<?> changeStatus(@Valid @RequestBody ChangeStatusDto changeStatusDto) {
+    public Task changeStatus(@Valid @RequestBody ChangeStatusDto changeStatusDto) {
         return taskService.changeStatus(changeStatusDto);
     }
 
