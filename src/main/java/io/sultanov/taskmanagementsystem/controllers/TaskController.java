@@ -50,7 +50,7 @@ public class TaskController {
     }
 
     @PutMapping("/comments")
-    public Task addComment(@RequestBody CommentDto commentDto, @RequestParam(name = "task_id") Long taskId) {
+    public Task addComment(@Valid @RequestBody CommentDto commentDto, @RequestParam(name = "task_id") Long taskId) {
         return taskService.addComment(taskId, commentDto);
     }
 

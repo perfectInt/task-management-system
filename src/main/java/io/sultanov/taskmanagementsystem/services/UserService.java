@@ -47,7 +47,8 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(ObjectNotFoundException::new);
+        return userRepository.findById(id).orElseThrow(() ->
+                new ObjectNotFoundException("User with this id does not exist"));
     }
 
     public List<User> getExecutors(List<String> emails) {
@@ -61,11 +62,12 @@ public class UserService {
                         loginDto.getPassword()
                 )
         );
-        var user = userRepository.findByEmail(loginDto.getEmail()).orElseThrow(ObjectNotFoundException::new);
+        var user = userRepository.findByEmail(loginDto.getEmail()).orElseThrow(() ->
+                new ObjectNotFoundException("User with this email does not exist"));
         return jwtService.generateToken(user);
     }
 
-    @Mapper
+    @Mapper(componentModel = "spring")
     public interface UserMapper {
         User mapToUser(RegistrationDto registrationDto);
     }
