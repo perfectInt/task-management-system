@@ -1,13 +1,13 @@
 package io.sultanov.taskmanagementsystem.models.dto;
 
 import io.sultanov.taskmanagementsystem.utils.Status;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class ChangeStatusDto {
-    @NotBlank(message = "Id cannot be blank")
+    @NotNull(message = "Id cannot be blank")
     private Long id;
-    @NotBlank(message = "You must set a status")
+    @NotNull(message = "You must set a status")
     private Status status;
 }
