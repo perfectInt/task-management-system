@@ -33,7 +33,7 @@ public class TaskService {
     private Integer pageSize;
 
     public Task createTask(TaskDto taskDto) {
-        Task task = taskMapper.mapToTask(taskDto);
+        Task task = taskMapper.dtoToTask(taskDto);
         task.setExecutors(userService.getExecutors(taskDto.getExecutors()));
         task.setAuthor(SecurityContextHolder.getContext().getAuthentication().getName());
         return taskRepository.save(task);
@@ -43,7 +43,7 @@ public class TaskService {
         Task task = getTaskById(taskDto.getId());
         String author = SecurityContextHolder.getContext().getAuthentication().getName();
         if (task.getAuthor().equals(author)) {
-            task = taskMapper.mapToTask(taskDto);
+            task = taskMapper.dtoToTask(taskDto);
             task.setAuthor(author);
             taskRepository.save(task);
         } else {

@@ -67,7 +67,7 @@ public class UserService {
         return jwtService.generateToken(user);
     }
 
-    @Mapper
+    @Mapper(componentModel = "spring")
     public interface UserMapper {
         User mapToUser(RegistrationDto registrationDto);
     }
