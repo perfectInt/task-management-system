@@ -3,6 +3,7 @@ package io.sultanov.taskmanagementsystem.services;
 import io.sultanov.taskmanagementsystem.exceptions.ObjectAlreadyExistsException;
 import io.sultanov.taskmanagementsystem.exceptions.ObjectNotFoundException;
 import io.sultanov.taskmanagementsystem.exceptions.PasswordException;
+import io.sultanov.taskmanagementsystem.mappers.UserMapper;
 import io.sultanov.taskmanagementsystem.models.User;
 import io.sultanov.taskmanagementsystem.models.dto.LoginDto;
 import io.sultanov.taskmanagementsystem.models.dto.RegistrationDto;
@@ -31,7 +32,7 @@ public class UserService {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
+    private final UserMapper mapper;
 
     @Transactional
     public User registerUser(RegistrationDto registrationDto) {
@@ -69,10 +70,5 @@ public class UserService {
         );
         var user = getUserByEmail(loginDto.getEmail());
         return jwtService.generateToken(user);
-    }
-
-    @Mapper(componentModel = "spring")
-    public interface UserMapper {
-        User mapToUser(RegistrationDto registrationDto);
     }
 }

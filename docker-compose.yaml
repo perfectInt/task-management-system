@@ -16,6 +16,21 @@ services:
     networks:
       - time-management-network
 
+  app:
+    container_name: time-management-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: time-management-image:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - time-management-db
+    networks:
+      - time-management-network
+
 volumes:
   time-management-db:
     driver: local
