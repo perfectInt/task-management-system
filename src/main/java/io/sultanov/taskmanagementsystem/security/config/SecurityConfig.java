@@ -34,6 +34,11 @@ public class SecurityConfig {
                                 "/api/v1/users/registration",
                                 "/api/v1/users/login"
                         ).permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
